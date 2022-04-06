@@ -44,6 +44,8 @@ export class ProductController {
     return this.productService.getProductById(id);
   }
 
+  @Roles(UserRole.ADMIN)
+  @UseGuards(AuthGuard(), RolesGuard)
   @Patch(':id')
   updateProduct(
     @Param() productIdParam: GetOneProductParamDto,
@@ -53,6 +55,8 @@ export class ProductController {
     return this.productService.updateProduct(id, updateProductDto);
   }
 
+  @Roles(UserRole.ADMIN)
+  @UseGuards(AuthGuard(), RolesGuard)
   @Delete(':id')
   deleteProduct(@Param() productIdParam: GetOneProductParamDto): Promise<void> {
     const { id } = productIdParam;
