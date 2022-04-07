@@ -1,5 +1,6 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
-import { UserRole } from './user-roles.enum';
+import { Exclude } from 'class-transformer';
+import { UserRole } from '../auth/user-roles.enum';
 
 @Entity()
 export class User {
@@ -10,6 +11,7 @@ export class User {
   username: string;
 
   @Column()
+  @Exclude({ toPlainOnly: true })
   password: string;
 
   @Column({ type: 'enum', enum: UserRole, default: UserRole.USER })

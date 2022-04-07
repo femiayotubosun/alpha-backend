@@ -13,7 +13,7 @@ import { ProductService } from './product.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { GetProductsFilterDto } from './dto/get-products.dto';
-import { GetOneProductParamDto } from './dto/get-one-product.dto';
+import { GetOneResourceParamDto } from './dto/get-one-product.dto';
 import { Product } from './entities/product.entity';
 import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
@@ -22,10 +22,8 @@ import { UserRole } from 'src/auth/user-roles.enum';
 
 @Controller('products')
 export class ProductController {
-  constructor(private readonly productService: ProductService) {}
+  constructor(private productService: ProductService) {}
 
-  @Roles(UserRole.ADMIN)
-  @UseGuards(AuthGuard(), RolesGuard)
   @Post()
   create(@Body() createProductDto: CreateProductDto): Promise<Product> {
     return this.productService.createProduct(createProductDto);
@@ -38,7 +36,7 @@ export class ProductController {
 
   @Get(':id')
   getProductById(
-    @Param() productIdParam: GetOneProductParamDto,
+    @Param() productIdParam: GetOneResourceParamDto,
   ): Promise<Product> {
     const { id } = productIdParam;
     return this.productService.getProductById(id);
@@ -48,7 +46,7 @@ export class ProductController {
   @UseGuards(AuthGuard(), RolesGuard)
   @Patch(':id')
   updateProduct(
-    @Param() productIdParam: GetOneProductParamDto,
+    @Param() productIdParam: GetOneResourceParamDto,
     @Body() updateProductDto: UpdateProductDto,
   ): Promise<Product> {
     const { id } = productIdParam;
@@ -58,7 +56,9 @@ export class ProductController {
   @Roles(UserRole.ADMIN)
   @UseGuards(AuthGuard(), RolesGuard)
   @Delete(':id')
-  deleteProduct(@Param() productIdParam: GetOneProductParamDto): Promise<void> {
+  deleteProduct(
+    @Param() productIdParam: GetOneResourceParamDto,
+  ): Promise<void> {
     const { id } = productIdParam;
     return this.productService.deleteProduct(id);
   }

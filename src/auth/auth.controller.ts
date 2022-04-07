@@ -13,7 +13,7 @@ import { AuthCredentialsDto } from './dto/auth-credentials.dto';
 import { LoginCredentialsDto } from './dto/login-credentials.dto';
 import { Roles } from './decorators/roles.decorator';
 import { RolesGuard } from './guards/roles.guard';
-import { User } from './user.entity';
+import { User } from '../user/user.entity';
 import { UserRole } from './user-roles.enum';
 
 @Controller('auth')

@@ -1,6 +1,6 @@
 import { IsUUID } from 'class-validator';
 
-export class GetOneProductParamDto {
+export class GetOneResourceParamDto {
   @IsUUID()
   id: string;
 }
