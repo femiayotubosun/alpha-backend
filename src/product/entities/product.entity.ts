@@ -1,5 +1,4 @@
-import { OrderItem } from 'src/order/entities/order-item.entity';
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 
 @Entity()
 export class Product {
@@ -14,9 +13,4 @@ export class Product {
 
   @Column()
   stock: number;
-
-  @OneToMany((_type) => OrderItem, (order_item) => order_item.product, {
-    eager: true,
-  })
-  order_items: OrderItem[];
 }
