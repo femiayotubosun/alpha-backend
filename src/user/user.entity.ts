@@ -1,6 +1,7 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Exclude } from 'class-transformer';
 import { UserRole } from '../auth/user-roles.enum';
+import { Order } from 'src/order/entities/order.entity';
 
 @Entity()
 export class User {
@@ -16,4 +17,7 @@ export class User {
 
   @Column({ type: 'enum', enum: UserRole, default: UserRole.USER })
   role: UserRole;
+
+  @OneToMany((_type) => Order, (order) => order.user, { eager: true })
+  orders: Order[];
 }
