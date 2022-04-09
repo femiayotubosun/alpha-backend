@@ -18,6 +18,6 @@ export class User {
   @Column({ type: 'enum', enum: UserRole, default: UserRole.USER })
   role: UserRole;
 
-  @OneToMany((_type) => Order, (order) => order.user, { eager: true })
+  @OneToMany((_type) => Order, (order) => order.user, { eager: false })
   orders: Order[];
 }

@@ -27,14 +27,14 @@ export class OrderItem {
   })
   product: Product;
 
-  @IsNumber()
-  @IsOptional()
-  protected price: number;
+  // @IsNumber()
+  // @IsOptional()
+  // protected price: number;
 
-  @AfterLoad()
-  @AfterInsert()
-  @AfterUpdate()
-  generatePrice(): void {
-    this.price = this.product.price * this.quantity;
-  }
+  // @AfterLoad()
+  // @AfterInsert()
+  // @AfterUpdate()
+  // generatePrice(): void {
+  //   this.price = this.product.price * this.quantity;
+  // }
 }

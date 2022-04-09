@@ -8,7 +8,6 @@ import { AuthCredentialsDto } from './dto/auth-credentials.dto';
 import { User } from '../user/user.entity';
 import * as bcrypt from 'bcrypt';
 import { FilterUserDto } from 'src/user/dto/user-filter.dto';
-import { v4 as uuid } from 'uuid';
 import { UserRole } from './user-roles.enum';
 
 @EntityRepository(User)
