@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
 import { OrderModule } from './order/order.module';
+import { PostSubscriber } from './order/order.subcriber';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { OrderModule } from './order/order.module';
       database: 'alpha-ecommerce-db',
       autoLoadEntities: true,
       synchronize: true,
+      subscribers: [PostSubscriber],
     }),
     AuthModule,
     UserModule,

@@ -12,7 +12,10 @@ import { UserRole } from './user-roles.enum';
 
 @EntityRepository(User)
 export class UsersRepository extends Repository<User> {
-  async createUser(authCredentialsDto: AuthCredentialsDto): Promise<void> {
+  async createUser(
+    authCredentialsDto: AuthCredentialsDto,
+    admin: boolean = false,
+  ): Promise<void> {
     const { username, password } = authCredentialsDto;
 
     // Hash password
@@ -22,31 +25,7 @@ export class UsersRepository extends Repository<User> {
     const user = this.create({
       username,
       password: hashedPassword,
-    });
-
-    try {
-      await this.save(user);
-    } catch (error) {
-      if (error.code === '23505') {
-        // duplicate username
-        throw new ConflictException('Username alredy exists');
-      } else {
-        throw new InternalServerErrorException();
-      }
-    }
-  }
-
-  async createAdminUser(authCredentialsDto: AuthCredentialsDto): Promise<void> {
-    const { username, password } = authCredentialsDto;
-
-    // Hash password
-    const salt = await bcrypt.genSalt();
-    const hashedPassword = await bcrypt.hash(password, salt);
-
-    const user = this.create({
-      username,
-      password: hashedPassword,
-      role: UserRole.ADMIN,
+      role: admin ? UserRole.ADMIN : UserRole.USER,
     });
 
     try {

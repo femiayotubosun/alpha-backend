@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { copyFileSync } from 'fs';
 import { ProductRepository } from 'src/product/product.repository';
 import { User } from 'src/user/user.entity';
 import { CreateOrderDto } from './dto/create-order.dto';
@@ -15,21 +16,27 @@ export class OrderService {
     private productRepository: ProductRepository,
   ) {}
 
-  async create(createOrderDto: CreateOrderDto, user: User) {
+  async create(createOrderDto: CreateOrderDto, user: User): Promise<void> {
     const { items } = createOrderDto;
     // Create order
-    const order = await this.orderRepository.createOrder(user);
-
+    var order = await this.orderRepository.createOrder(user);
     // Create order Item
+
     items.forEach(async (item) => {
+      var charge: number = 0;
       // Get product
       let product = await this.productRepository.getProductById(item.id);
+      charge = product.price * item.quantity;
+
+      order.price = order.price + charge;
       // Create
-      let orderitem = await this.orderItemRepository.createOrderItem({
+      await this.orderItemRepository.createOrderItem({
         product,
         quantity: item.quantity,
         order,
       });
+
+      await this.orderRepository.save(order);
     });
   }
 
@@ -37,8 +44,8 @@ export class OrderService {
     return this.orderRepository.getAllOrders();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} order`;
+  getOrderById(id: string): Promise<Order> {
+    return this.orderRepository.getOrderById(id);
   }
 
   update(id: number, updateOrderDto: UpdateOrderDto) {

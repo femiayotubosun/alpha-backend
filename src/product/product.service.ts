@@ -26,7 +26,6 @@ export class ProductService {
     updateProductDto: UpdateProductDto,
   ): Promise<Product> {
     const product = await this.getProductById(id);
-    console.log(product);
 
     const { name, price, stock } = updateProductDto;
     console.log(name, price, stock);

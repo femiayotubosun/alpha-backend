@@ -13,7 +13,7 @@ export class UserService {
   }
 
   createAdminUser(authCredentialsDto: AuthCredentialsDto): Promise<void> {
-    return this.userRepository.createAdminUser(authCredentialsDto);
+    return this.userRepository.createUser(authCredentialsDto, true);
   }
 
   getUsers(filterDto: FilterUserDto): Promise<User[]> {

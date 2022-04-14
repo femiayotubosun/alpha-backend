@@ -1,4 +1,4 @@
-import { BadRequestException } from '@nestjs/common';
+import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ProductRepository } from 'src/product/product.repository';
 import { User } from 'src/user/user.entity';
@@ -15,7 +15,6 @@ export class OrderRepository extends Repository<Order> {
 
   async createOrder(user: User): Promise<Order> {
     const order = this.create({
-      price: 0,
       user,
     });
 
@@ -24,5 +23,19 @@ export class OrderRepository extends Repository<Order> {
 
   async getAllOrders(): Promise<Order[]> {
     return await this.find();
+  }
+
+  async getOrderById(id: string): Promise<Order> {
+    const order = await this.findOne({
+      where: {
+        id,
+      },
+    });
+
+    if (!order) {
+      throw new NotFoundException(`Order with ID ${id} does not exist`);
+    }
+
+    return order;
   }
 }

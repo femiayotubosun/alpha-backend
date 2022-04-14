@@ -19,7 +19,7 @@ export class Order {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column()
+  @Column({ default: 0 })
   price: number;
 
   @ManyToOne((_type) => User, (user) => user.orders, { eager: true })
@@ -29,22 +29,6 @@ export class Order {
     eager: true,
   })
   items: OrderItem[];
-
-  // @IsNumber()
-  // @IsOptional()
-  // protected charge: number;
-
-  // @AfterLoad()
-  // @AfterInsert()
-  // @AfterUpdate()
-  // generatePrice(): void {
-  //   let charge = 0;
-  //   this.items.forEach((item) => {
-  //     charge += item.product.price * item.quantity;
-  //   });
-
-  //   this.charge = charge
-  // }
 }
 
 /* 

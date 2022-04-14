@@ -14,6 +14,7 @@ import { UpdateOrderDto } from './dto/update-order.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { GetUser } from 'src/auth/decorators/get-user.decorator';
 import { User } from 'src/user/user.entity';
+import { GetOneResourceParamDto } from 'src/product/dto/get-one-product.dto';
 
 @Controller('orders')
 @UseGuards(AuthGuard())
@@ -26,13 +27,15 @@ export class OrderController {
   }
 
   @Get()
-  getAllOrders(@GetUser() user: User) {
+  getAllOrders() {
+    // Get my orders
     return this.orderService.getAllOrders();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.orderService.findOne(+id);
+  getOrderById(@Param() productIdParam: GetOneResourceParamDto) {
+    const { id } = productIdParam;
+    return this.orderService.getOrderById(id);
   }
 
   @Patch(':id')
