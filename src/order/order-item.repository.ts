@@ -3,6 +3,7 @@ import { Product } from 'src/product/entities/product.entity';
 import { EntityRepository, Repository } from 'typeorm';
 import { CreateOrderItemInterface } from './dto/create-order-item.dto';
 import { OrderItem } from './entities/order-item.entity';
+import { Order } from './entities/order.entity';
 
 @EntityRepository(OrderItem)
 export class OrderItemRepository extends Repository<OrderItem> {
@@ -21,5 +22,13 @@ export class OrderItemRepository extends Repository<OrderItem> {
     });
 
     return await this.save(orderItem);
+  }
+
+  async getOrderItemsByOrder(order: Order): Promise<OrderItem[]> {
+    return await this.find({
+      where: {
+        order,
+      },
+    });
   }
 }

@@ -16,6 +16,7 @@ export class User {
   password: string;
 
   @Column({ type: 'enum', enum: UserRole, default: UserRole.USER })
+  @Exclude({ toPlainOnly: true })
   role: UserRole;
 
   @OneToMany((_type) => Order, (order) => order.user, { eager: false })

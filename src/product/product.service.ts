@@ -28,7 +28,6 @@ export class ProductService {
     const product = await this.getProductById(id);
 
     const { name, price, stock } = updateProductDto;
-    console.log(name, price, stock);
 
     if (name) {
       product.name = name;

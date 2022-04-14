@@ -15,6 +15,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { GetUser } from 'src/auth/decorators/get-user.decorator';
 import { User } from 'src/user/user.entity';
 import { GetOneResourceParamDto } from 'src/product/dto/get-one-product.dto';
+import { Order } from './entities/order.entity';
 
 @Controller('orders')
 @UseGuards(AuthGuard())
@@ -28,23 +29,37 @@ export class OrderController {
 
   @Get()
   getAllOrders() {
-    // Get my orders
     return this.orderService.getAllOrders();
   }
 
   @Get(':id')
-  getOrderById(@Param() productIdParam: GetOneResourceParamDto) {
+  getOrderById(
+    @Param() productIdParam: GetOneResourceParamDto,
+  ): Promise<Order> {
     const { id } = productIdParam;
     return this.orderService.getOrderById(id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateOrderDto: UpdateOrderDto) {
-    return this.orderService.update(+id, updateOrderDto);
+  // @Patch(':id')
+  // updateOrderById(
+  //   @Param() productIdParam: GetOneResourceParamDto,
+  //   @Body() updateOrderDto: UpdateOrderDto,
+  // ): Promise<Order> {
+  //   const { id } = productIdParam;
+  //   return this.orderService.updateOrder(id, updateOrderDto);
+  // }
+
+  @Post(':id/pay')
+  payOrder(@Param() productIdParam: GetOneResourceParamDto): Promise<Order> {
+    const { id } = productIdParam;
+    return this.orderService.payOrder(id);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.orderService.remove(+id);
+  deleteOrderById(
+    @Param() productIdParam: GetOneResourceParamDto,
+  ): Promise<void> {
+    const { id } = productIdParam;
+    return this.orderService.deleteOrderById(id);
   }
 }

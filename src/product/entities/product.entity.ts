@@ -16,7 +16,7 @@ export class Product {
   stock: number;
 
   @OneToMany((_type) => OrderItem, (order_item) => order_item.product, {
-    eager: true,
+    eager: false,
   })
   order_items: OrderItem[];
 }

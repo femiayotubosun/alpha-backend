@@ -35,6 +35,11 @@ export class UserController {
     return this.userService.getUserById(id);
   }
 
+
+  // GET MY ORDERS
+
+  // GET MY DETAILS
+
   //   TODO: Update User
 
   @Post()

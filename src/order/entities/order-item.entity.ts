@@ -1,14 +1,7 @@
 import { IsNumber, IsOptional } from 'class-validator';
 import { Product } from 'src/product/entities/product.entity';
-import {
-  AfterInsert,
-  AfterLoad,
-  AfterUpdate,
-  Column,
-  Entity,
-  ManyToOne,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { OrderStatus } from './order-status.enum';
 import { Order } from './order.entity';
 
 @Entity()
@@ -23,14 +16,7 @@ export class OrderItem {
   order: Order;
 
   @ManyToOne((_type) => Product, (product) => product.order_items, {
-    eager: false,
+    eager: true,
   })
   product: Product;
-
-  // @AfterInsert()
-  // generatePrice(): void {
-  //   var currentCharge = this.order.price;
-  //   var thisCharge = this.product.price * this.quantity;
-  //   this.order.price = currentCharge + thisCharge;
-  // }
 }

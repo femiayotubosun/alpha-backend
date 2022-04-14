@@ -13,6 +13,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { OrderItem } from './order-item.entity';
+import { OrderStatus } from './order-status.enum';
 
 @Entity()
 export class Order {
@@ -29,22 +30,9 @@ export class Order {
     eager: true,
   })
   items: OrderItem[];
+
+  @Column({ type: 'enum', enum: OrderStatus, default: OrderStatus.PENDING })
+  status: OrderStatus;
+
+  // Auto now
 }
-
-/* 
-
-Order Detail
-
-
-id
-
-order_id
-
-product_id
-
-quantity
-
-
-
-
-*/

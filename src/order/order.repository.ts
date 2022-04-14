@@ -10,9 +10,6 @@ import { OrderItemRepository } from './order-item.repository';
 
 @EntityRepository(Order)
 export class OrderRepository extends Repository<Order> {
-  productRepository: ProductRepository;
-  orderItemRepository: OrderItemRepository;
-
   async createOrder(user: User): Promise<Order> {
     const order = this.create({
       user,
