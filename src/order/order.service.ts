@@ -16,7 +16,7 @@ const axios = require('axios').default;
 
 const config = {
   headers: {
-    Authorization: 'Bearer sk_test_89ab90ebfc20e656e10de4102b41162de0bccfe9',
+    Authorization: `Bearer ${process.env.STAGE}`,
     'Content-Type': 'application/json',
   },
 };
