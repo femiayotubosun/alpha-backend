@@ -1,6 +1,5 @@
-import { Injectable } from '@nestjs/common';
-import { copyFileSync } from 'fs';
-import { async } from 'rxjs';
+import { BadRequestException, Injectable } from '@nestjs/common';
+import { url } from 'inspector';
 import { ProductRepository } from 'src/product/product.repository';
 import { User } from 'src/user/user.entity';
 import { CreateOrderDto } from './dto/create-order.dto';
@@ -11,9 +10,20 @@ import { OrderStatus } from './entities/order-status.enum';
 import { Order } from './entities/order.entity';
 import { OrderItemRepository } from './order-item.repository';
 import { OrderRepository } from './order.repository';
+// import { payWithPaystack } from './payment.service';
+
+const axios = require('axios').default;
+
+const config = {
+  headers: {
+    Authorization: 'Bearer sk_test_89ab90ebfc20e656e10de4102b41162de0bccfe9',
+    'Content-Type': 'application/json',
+  },
+};
 
 @Injectable()
 export class OrderService {
+  responseData = {};
   constructor(
     private orderRepository: OrderRepository,
     private orderItemRepository: OrderItemRepository,
@@ -52,17 +62,59 @@ export class OrderService {
     return await this.orderRepository.getOrderById(id);
   }
 
-  async payOrder(id: string): Promise<Order> {
+  async payOrder(id: string, user: User) {
     const order = await this.getOrderById(id);
-
-    // TODO update oder status
-    const updateOrderDto: UpdateOrderDto = {
-      status: OrderStatus.APPROVED,
+    const charge = await this.getOrderCharge(order.id);
+    const orderData = {
+      email: user.email,
+      amount: charge,
     };
-    return await this.updateOrder(order.id, updateOrderDto);
+    const resp = await axios.post(
+      'https://api.paystack.co/transaction/initialize',
+      orderData,
+      config,
+    );
+
+    const data = resp.data;
+    if (data.status === true) {
+      const updateOrderData = {
+        reference: data.data.reference,
+        status: OrderStatus.PROCESSING,
+      };
+      await this.updateOrder(order.id, updateOrderData);
+      return data;
+    } else {
+      throw new BadRequestException('Something went wrong');
+    }
   }
 
-  async payWithPayStack(paystackDto: PaystackDto) {}
+  async verifyOrder(id: string) {
+    const order = await this.getOrderById(id);
+    if (order.refrence === '') {
+      throw new BadRequestException(
+        'Something went wrong with the payment of this order',
+      );
+    }
+    const resp = await axios.get(
+      `https://api.paystack.co/transaction/verify/${order.refrence}`,
+      config,
+    );
+
+    if (resp.data.status === true) {
+      const updateOrderData = {
+        status: OrderStatus.APPROVED,
+      };
+      await this.updateOrder(order.id, updateOrderData);
+
+      return {
+        message: 'Order has been verified!',
+      };
+    } else {
+      return {
+        message: 'Somethig went wrong with your payment.',
+      };
+    }
+  }
 
   async updateOrder(
     id: string,
@@ -70,7 +122,7 @@ export class OrderService {
   ): Promise<Order> {
     const order = await this.getOrderById(id);
 
-    const { price, status } = updateOrderDto;
+    const { price, status, reference } = updateOrderDto;
 
     if (price) {
       order.price = price;
@@ -78,6 +130,10 @@ export class OrderService {
 
     if (status) {
       order.status = status;
+    }
+
+    if (reference) {
+      order.refrence = reference;
     }
 
     return await this.orderRepository.save(order);

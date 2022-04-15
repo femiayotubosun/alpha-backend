@@ -9,6 +9,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
+import { GetUser } from 'src/auth/decorators/get-user.decorator';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { AuthCredentialsDto } from 'src/auth/dto/auth-credentials.dto';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
@@ -35,10 +36,16 @@ export class UserController {
     return this.userService.getUserById(id);
   }
 
+  @Get('/me/details')
+  getUserDetails(@GetUser() user: User) {
+    return this.userService.getUserDetails(user);
+  }
 
   // GET MY ORDERS
-
-  // GET MY DETAILS
+  @Get('/me/orders')
+  getUserOrders(@GetUser() user: User) {
+    return this.userService.getUserOrders(user);
+  }
 
   //   TODO: Update User
 

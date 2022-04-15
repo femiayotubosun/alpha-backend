@@ -47,20 +47,29 @@ export class OrderController {
     return this.orderService.getOrderById(id);
   }
 
-  @Post(':id/pay')
-  payOrder(
-    @Param() productIdParam: GetOneResourceParamDto,
-    @GetUser() user: User,
-  ): Promise<Order> {
-    const { id } = productIdParam;
-    return this.orderService.payOrder(id);
-  }
-
   @Delete(':id')
   deleteOrderById(
     @Param() productIdParam: GetOneResourceParamDto,
   ): Promise<void> {
     const { id } = productIdParam;
     return this.orderService.deleteOrderById(id);
+  }
+
+  @Get(':id/pay')
+  payOrder(
+    @Param() productIdParam: GetOneResourceParamDto,
+    @GetUser() user: User,
+  ) {
+    const { id } = productIdParam;
+    return this.orderService.payOrder(id, user);
+  }
+
+  @Get(':id/verify')
+  verifyOrder(
+    @Param() productIdParam: GetOneResourceParamDto,
+    @GetUser() user: User,
+  ) {
+    const { id } = productIdParam;
+    return this.orderService.verifyOrder(id);
   }
 }

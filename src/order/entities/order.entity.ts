@@ -34,5 +34,8 @@ export class Order {
   @Column({ type: 'enum', enum: OrderStatus, default: OrderStatus.PENDING })
   status: OrderStatus;
 
+  @Column({ nullable: true, default: '' })
+  refrence: string;
+
   // Auto now
 }

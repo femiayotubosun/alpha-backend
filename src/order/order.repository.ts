@@ -35,4 +35,12 @@ export class OrderRepository extends Repository<Order> {
 
     return order;
   }
+
+  async getOrderByUser(user: User): Promise<Order[]> {
+    return await this.find({
+      where: {
+        user,
+      },
+    });
+  }
 }
