@@ -20,10 +20,13 @@ import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { UserRole } from 'src/auth/user-roles.enum';
 
+@UseGuards(AuthGuard())
 @Controller('products')
 export class ProductController {
   constructor(private productService: ProductService) {}
 
+  @Roles(UserRole.ADMIN)
+  @UseGuards(AuthGuard(), RolesGuard)
   @Post()
   create(@Body() createProductDto: CreateProductDto): Promise<Product> {
     return this.productService.createProduct(createProductDto);

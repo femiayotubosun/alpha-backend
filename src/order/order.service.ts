@@ -4,6 +4,7 @@ import { async } from 'rxjs';
 import { ProductRepository } from 'src/product/product.repository';
 import { User } from 'src/user/user.entity';
 import { CreateOrderDto } from './dto/create-order.dto';
+import { PaystackDto } from './dto/paystack.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { OrderItem } from './entities/order-item.entity';
 import { OrderStatus } from './entities/order-status.enum';
@@ -60,6 +61,8 @@ export class OrderService {
     };
     return await this.updateOrder(order.id, updateOrderDto);
   }
+
+  async payWithPayStack(paystackDto: PaystackDto) {}
 
   async updateOrder(
     id: string,

@@ -16,9 +16,12 @@ import { GetUser } from 'src/auth/decorators/get-user.decorator';
 import { User } from 'src/user/user.entity';
 import { GetOneResourceParamDto } from 'src/product/dto/get-one-product.dto';
 import { Order } from './entities/order.entity';
+import { Roles } from 'src/auth/decorators/roles.decorator';
+import { UserRole } from 'src/auth/user-roles.enum';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
 
-@Controller('orders')
 @UseGuards(AuthGuard())
+@Controller('orders')
 export class OrderController {
   constructor(private orderService: OrderService) {}
 
@@ -27,10 +30,14 @@ export class OrderController {
     return this.orderService.create(createOrderDto, user);
   }
 
+  @Roles(UserRole.ADMIN)
+  @UseGuards(RolesGuard)
   @Get()
   getAllOrders() {
     return this.orderService.getAllOrders();
   }
+
+  // Get my orders
 
   @Get(':id')
   getOrderById(
@@ -40,17 +47,11 @@ export class OrderController {
     return this.orderService.getOrderById(id);
   }
 
-  // @Patch(':id')
-  // updateOrderById(
-  //   @Param() productIdParam: GetOneResourceParamDto,
-  //   @Body() updateOrderDto: UpdateOrderDto,
-  // ): Promise<Order> {
-  //   const { id } = productIdParam;
-  //   return this.orderService.updateOrder(id, updateOrderDto);
-  // }
-
   @Post(':id/pay')
-  payOrder(@Param() productIdParam: GetOneResourceParamDto): Promise<Order> {
+  payOrder(
+    @Param() productIdParam: GetOneResourceParamDto,
+    @GetUser() user: User,
+  ): Promise<Order> {
     const { id } = productIdParam;
     return this.orderService.payOrder(id);
   }
