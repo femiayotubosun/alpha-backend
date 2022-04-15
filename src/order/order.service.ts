@@ -1,4 +1,5 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { url } from 'inspector';
 import { ProductRepository } from 'src/product/product.repository';
 import { User } from 'src/user/user.entity';
@@ -14,23 +15,23 @@ import { OrderRepository } from './order.repository';
 
 const axios = require('axios').default;
 
-const config = {
-  headers: {
-    Authorization: `Bearer ${process.env.STAGE}`,
-    'Content-Type': 'application/json',
-  },
-};
-
 @Injectable()
 export class OrderService {
-  responseData = {};
   constructor(
     private orderRepository: OrderRepository,
     private orderItemRepository: OrderItemRepository,
     private productRepository: ProductRepository,
+    private configService: ConfigService,
   ) {}
 
-  async create(createOrderDto: CreateOrderDto, user: User): Promise<void> {
+  config = {
+    headers: {
+      Authorization: `Bearer ${this.configService.get('PAYSTACK_SECRET')}`,
+      'Content-Type': 'application/json',
+    },
+  };
+
+  async create(createOrderDto: CreateOrderDto, user: User): Promise<Order> {
     const { items } = createOrderDto;
     // Create order
     var order = await this.orderRepository.createOrder(user);
@@ -52,6 +53,8 @@ export class OrderService {
 
       await this.orderRepository.save(order);
     });
+
+    return await this.orderRepository.getOrderById(order.id);
   }
 
   getAllOrders(): Promise<Order[]> {
@@ -65,17 +68,24 @@ export class OrderService {
   async payOrder(id: string, user: User) {
     const order = await this.getOrderById(id);
     const charge = await this.getOrderCharge(order.id);
+    if (order.status === OrderStatus.APPROVED) {
+      return {
+        message: 'You have already paid for this order',
+      };
+    }
+
     const orderData = {
       email: user.email,
-      amount: charge,
+      amount: String(charge),
     };
     const resp = await axios.post(
       'https://api.paystack.co/transaction/initialize',
       orderData,
-      config,
+      this.config,
     );
 
     const data = resp.data;
+    // console.log(data);
     if (data.status === true) {
       const updateOrderData = {
         reference: data.data.reference,
@@ -97,25 +107,36 @@ export class OrderService {
     }
     const resp = await axios.get(
       `https://api.paystack.co/transaction/verify/${order.refrence}`,
-      config,
+      this.config,
     );
 
-    if (resp.data.status === true) {
+    const data = resp.data;
+
+    if (data.data.status === 'success') {
       const updateOrderData = {
         status: OrderStatus.APPROVED,
       };
       await this.updateOrder(order.id, updateOrderData);
 
       return {
-        message: 'Order has been verified!',
+        message: 'Payment successful!',
       };
-    } else {
+    } else if (data.data.status === 'failed') {
+      const updateOrderData = {
+        status: OrderStatus.FAILED,
+      };
+
+      await this.updateOrder(order.id, updateOrderData);
+
       return {
         message: 'Somethig went wrong with your payment.',
       };
+    } else {
+      return {
+        message: 'Something went wrong',
+      };
     }
   }
-
   async updateOrder(
     id: string,
     updateOrderDto: UpdateOrderDto,

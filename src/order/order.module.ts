@@ -7,9 +7,11 @@ import { AuthModule } from 'src/auth/auth.module';
 import { OrderRepository } from './order.repository';
 import { OrderItemRepository } from './order-item.repository';
 import { ProductRepository } from 'src/product/product.repository';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
+    ConfigModule,
     TypeOrmModule.forFeature([
       OrderRepository,
       OrderItemRepository,

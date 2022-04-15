@@ -36,8 +36,6 @@ lerna-debug.log*
 src/product/alpha-backend.code-workspace
 
 
-# Environment file
-*.env.stage.dev
-*.env.stage.prod
+# Environment files
 .env.stage.dev
 .env.stage.prod
