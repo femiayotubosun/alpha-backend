@@ -100,11 +100,22 @@ export class OrderService {
 
   async verifyOrder(id: string) {
     const order = await this.getOrderById(id);
+
+    // Check order has been paid for
     if (order.refrence === '') {
       throw new BadRequestException(
         'Something went wrong with the payment of this order',
       );
     }
+
+    // Check if order has already been verified
+
+    if (order.status === OrderStatus.APPROVED) {
+      throw new BadRequestException('You have already verified this order');
+    }
+
+    // Verify the transaction from paystack
+
     const resp = await axios.get(
       `https://api.paystack.co/transaction/verify/${order.refrence}`,
       this.config,
@@ -112,30 +123,35 @@ export class OrderService {
 
     const data = resp.data;
 
+    // Paymenet su
+
     if (data.data.status === 'success') {
       const updateOrderData = {
         status: OrderStatus.APPROVED,
       };
-      await this.updateOrder(order.id, updateOrderData);
 
-      return {
+      var returnData = {
         message: 'Payment successful!',
       };
+      await this.updateOrder(order.id, updateOrderData);
+      await this.updateOrderItems(order.id);
     } else if (data.data.status === 'failed') {
       const updateOrderData = {
         status: OrderStatus.FAILED,
       };
-
-      await this.updateOrder(order.id, updateOrderData);
-
-      return {
+      var returnData = {
         message: 'Somethig went wrong with your payment.',
       };
+
+      await this.updateOrder(order.id, updateOrderData);
+      return;
     } else {
       return {
         message: 'Something went wrong',
       };
     }
+
+    return returnData;
   }
   async updateOrder(
     id: string,
@@ -181,5 +197,17 @@ export class OrderService {
     });
 
     return await charge;
+  }
+
+  async updateOrderItems(id: string): Promise<void> {
+    const order = await this.orderRepository.getOrderById(id);
+
+    order.items.forEach(async (item: OrderItem) => {
+      const prod = item.product;
+      prod.stock -= item.quantity;
+      await this.productRepository.save(prod);
+      item.resolved = true;
+      await this.orderItemRepository.save(item);
+    });
   }
 }

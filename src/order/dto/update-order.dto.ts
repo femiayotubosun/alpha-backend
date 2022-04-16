@@ -15,4 +15,8 @@ export class UpdateOrderDto {
   @IsOptional()
   @IsString()
   reference?: string;
+
+  @IsOptional()
+  @IsNumber()
+  purchaseQuantity?: string;
 }

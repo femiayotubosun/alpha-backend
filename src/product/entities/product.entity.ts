@@ -19,4 +19,7 @@ export class Product {
     eager: false,
   })
   order_items: OrderItem[];
+
+  @Column({ nullable: true })
+  photo: string;
 }

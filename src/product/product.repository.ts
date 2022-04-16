@@ -53,4 +53,12 @@ export class ProductRepository extends Repository<Product> {
 
     return product;
   }
+  async checkAvailabe(id: string, quantity: number): Promise<boolean> {
+    const product = await this.getProductById(id);
+
+    if (product.stock - quantity < 0) {
+      return false;
+    }
+    return true;
+  }
 }

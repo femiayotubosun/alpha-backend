@@ -72,4 +72,10 @@ export class OrderController {
     const { id } = productIdParam;
     return this.orderService.verifyOrder(id);
   }
+
+  @Get(':id/update')
+  testOrder(@Param() productIdParam: GetOneResourceParamDto) {
+    const { id } = productIdParam;
+    return this.orderService.updateOrderItems(id);
+  }
 }

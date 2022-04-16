@@ -1,4 +1,5 @@
 import { IsNumber, IsOptional } from 'class-validator';
+
 import { Product } from 'src/product/entities/product.entity';
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { OrderStatus } from './order-status.enum';
@@ -19,4 +20,7 @@ export class OrderItem {
     eager: true,
   })
   product: Product;
+
+  @Column({ type: 'boolean', default: false })
+  resolved: boolean;
 }
