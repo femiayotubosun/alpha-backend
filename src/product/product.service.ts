@@ -27,7 +27,7 @@ export class ProductService {
   ): Promise<Product> {
     const product = await this.getProductById(id);
 
-    const { name, price, stock } = updateProductDto;
+    const { name, price, stock, photo } = updateProductDto;
 
     if (name) {
       product.name = name;
@@ -41,8 +41,18 @@ export class ProductService {
       product.stock = stock;
     }
 
+    if (photo) {
+      product.photo = photo;
+    }
+
     await this.productRepository.save(product);
     return product;
+  }
+
+  async addProductPhoto(id: string, filename: string) {
+    return await this.updateProduct(id, {
+      photo: filename,
+    });
   }
 
   async deleteProduct(id: string): Promise<void> {

@@ -7,6 +7,7 @@ import { OrderModule } from './order/order.module';
 import { PostSubscriber } from './order/order.subcriber';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { configValidationSchema } from './config.schema';
+import { MulterModule } from '@nestjs/platform-express';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { configValidationSchema } from './config.schema';
       envFilePath: ['.env.stage.dev'],
       validationSchema: configValidationSchema,
     }),
+
     ProductModule,
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],

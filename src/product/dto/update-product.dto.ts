@@ -2,11 +2,14 @@ import { IsOptional } from 'class-validator';
 
 export class UpdateProductDto {
   @IsOptional()
-  name: string;
+  name?: string;
 
   @IsOptional()
-  price: number;
+  price?: number;
 
   @IsOptional()
-  stock: number;
+  stock?: number;
+
+  @IsOptional()
+  photo?: string;
 }
